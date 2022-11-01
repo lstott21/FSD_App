@@ -1,0 +1,71 @@
+{% extends 'api/main.html' %} {% block content %}
+
+
+{% if request.user.is_authenticated %}
+<nav>
+    <ul>
+        <li style="font-size:1rem; padding-left: 4rem;"><strong><a href="{% url 'logout' %}" role="button" style="width: 10rem; opacity: .5;">Logout</a></strong></li>
+    </ul>
+</nav>
+{% else %}
+<nav>
+    <ul>
+        <li style="font-size:1rem; padding-left: 4rem;"><strong><a href="{% url 'login' %}" role="button">Login</a></strong></li>
+    </ul>
+</nav>
+{% endif %}
+
+<nav style="margin-bottom: -2rem">
+    <ul>
+        <li style="font-size:1rem; padding-left: 4rem;"><strong>Item: <i>{{ item.name }}</i></strong></li>
+    </ul>
+    <ul>
+        <li style="font-size:1.5rem; padding-right: 4rem;"><strong>User: <i>{{ request.user.username }}</i></strong></li>
+    </ul>
+</nav>
+<!-- <p> {{ count }} {{my_list}} </p> -->
+<div class="container">
+    <article> 
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr);">
+            {% for k, v in my_list.items %}
+                <label>
+                    <input type="radio" name="image" value={{v}}>
+                    <img src={{v}} style="background-color: white; aspect-ratio: auto;">
+                </label>
+            {% endfor %}
+        </div>
+    </article>
+</div>
+
+<nav style="margin-top: 0;">
+    <ul>
+        <li style="font-size:2rem; padding-left: 4rem;"><strong><a href="{% url 'delete' item.id %}" role="button" style="width: 10rem; opacity: .6;">Skip</a></strong></li>
+    </ul>
+    <ul>
+        <li style="font-size:2rem; padding-right: 4rem;"><strong><a href="{% url 'update' item.id %}" role="button" style="width: 10rem; opacity: .6;">Save</a></strong></li>
+    </ul>
+</nav>
+
+<style>
+[type=radio] { 
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+[type=radio] + img {
+  cursor: pointer;
+}
+
+[type=radio]:checked + img {
+  outline: 2px solid #00ff00;
+  filter: brightness(25%);
+}
+li {
+    color: white 
+}
+
+</style>
+
+{% endblock content %}
