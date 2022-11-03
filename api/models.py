@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 class Item(models.Model):
     item_id = models.CharField(max_length=60)
@@ -12,6 +13,6 @@ class Item(models.Model):
         return "%s %s" % (self.item_id, self.name)
 
     def get_absolute_url(self):
-        return reverse('delete', kwargs={'pk': self.pk})
+        return reverse('update', kwargs={'pk': self.pk})
    
 

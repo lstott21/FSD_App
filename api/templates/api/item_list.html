@@ -1,71 +1,65 @@
 {% extends 'api/main.html' %} {% block content %}
 
-
-{% if request.user.is_authenticated %}
-<nav>
-    <ul>
-        <li style="font-size:1rem; padding-left: 4rem;"><strong><a href="{% url 'logout' %}" role="button" style="width: 10rem; opacity: .5;">Logout</a></strong></li>
-    </ul>
-</nav>
-{% else %}
-<nav>
-    <ul>
-        <li style="font-size:1rem; padding-left: 4rem;"><strong><a href="{% url 'login' %}" role="button">Login</a></strong></li>
-    </ul>
-</nav>
-{% endif %}
-
-<nav style="margin-bottom: -2rem">
-    <ul>
-        <li style="font-size:1rem; padding-left: 4rem;"><strong>Item: <i>{{ item.name }}</i></strong></li>
-    </ul>
-    <ul>
-        <li style="font-size:1.5rem; padding-right: 4rem;"><strong>User: <i>{{ request.user.username }}</i></strong></li>
-    </ul>
-</nav>
-<!-- <p> {{ count }} {{my_list}} </p> -->
-<div class="container">
-    <article> 
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr);">
-            {% for k, v in my_list.items %}
-                <label>
-                    <input type="radio" name="image" value={{v}}>
-                    <img src={{v}} style="background-color: white; aspect-ratio: auto;">
-                </label>
-            {% endfor %}
-        </div>
-    </article>
+<div class="container" style="text-align: center; margin-top: 5rem">
+    <h1 style="margin-bottom:0">Classifier Application</h1>
+    <p>Items: ({{completed}} / {{todo}}) Completed</p>
+    <p>{{item.id}}</p>
+    <div id="my_dataviz"></div>
+    <div style="display: flex; align-items: center; justify-content: center;">
+        <a href="{% url 'update' item.id %}" style="width:10rem" type="submit" name="submit" role="button">Continue</a>
+    </div>
 </div>
 
-<nav style="margin-top: 0;">
-    <ul>
-        <li style="font-size:2rem; padding-left: 4rem;"><strong><a href="{% url 'delete' item.id %}" role="button" style="width: 10rem; opacity: .6;">Skip</a></strong></li>
-    </ul>
-    <ul>
-        <li style="font-size:2rem; padding-right: 4rem;"><strong><a href="{% url 'update' item.id %}" role="button" style="width: 10rem; opacity: .6;">Save</a></strong></li>
-    </ul>
-</nav>
+<script src="https://d3js.org/d3.v4.js"></script>
 
-<style>
-[type=radio] { 
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+<script>
+    // set the dimensions and margins of the graph
+    var todo = {{todo}}
+        completed = {{completed}}
 
-[type=radio] + img {
-  cursor: pointer;
-}
-
-[type=radio]:checked + img {
-  outline: 2px solid #00ff00;
-  filter: brightness(25%);
-}
-li {
-    color: white 
-}
-
-</style>
+    var width = 600
+        height = 600
+        margin = 40
+    
+    // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+    var radius = Math.min(width, height) / 2 - margin
+    
+    // append the svg object to the div called 'my_dataviz'
+    var svg = d3.select("#my_dataviz")
+      .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+      .append("g")
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+    
+    // Create dummy data
+    var data = {a: todo, b: completed}
+    
+    // set the color scale
+    var color = d3.scaleOrdinal()
+      .domain(data)
+      .range(["#ff0000", "#00ff00"])
+    
+    // Compute the position of each group on the pie:
+    var pie = d3.pie()
+      .value(function(d) {return d.value; })
+    var data_ready = pie(d3.entries(data))
+    
+    // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+    svg
+      .selectAll('whatever')
+      .data(data_ready)
+      .enter()
+      .append('path')
+      .attr('d', d3.arc()
+        .innerRadius(0)
+        .outerRadius(radius)
+      )
+      .attr('fill', function(d){ return(color(d.data.key)) })
+      .attr("stroke", "black")
+      .style("stroke-width", "2px")
+      .style("opacity", 0.7)
+    
+    </script>
 
 {% endblock content %}

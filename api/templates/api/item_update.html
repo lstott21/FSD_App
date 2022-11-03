@@ -7,7 +7,6 @@
         {% csrf_token %}
         {{ form.as_p }}
         <p>Are your sure you want to edit this item? <b>{{item.name}}</b></p>
-        <!-- <p>{{my_list}}</p> -->
         <input class="button" type="submit" name="submit"/>
     </form>
 </div>
